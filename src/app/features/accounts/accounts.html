@@ -1,1 +1,23 @@
-<p>accounts works!</p>
+<section class="accounts-page">
+  <header class="page-header">
+    <div>
+      <h1>Accounts</h1>
+      <p>Manage your accounts and balances</p>
+    </div>
+
+    <button type="button">+ Add account</button>
+  </header>
+
+  <section class="accounts-list">
+        @for (account of accounts; track account.uuid) {
+            <article class="account">
+            <div>
+                <strong>{{ account.name }}</strong>
+                <span>{{ account.accountType }}</span>
+            </div>
+
+            <strong>€{{ account.balance }}</strong>
+            </article>
+        }
+    </section>
+</section>
