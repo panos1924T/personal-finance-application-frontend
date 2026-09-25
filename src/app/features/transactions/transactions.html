@@ -1,1 +1,327 @@
-<p>transactions works!</p>
+<section class="transactions-page">
+
+  <header class="page-header">
+    <div>
+      <h1>Transactions</h1>
+      <p>Track your income, expenses and transfers</p>
+    </div>
+  </header>
+
+  <app-transaction-form
+    [accounts]="accounts()"
+    [categories]="categories()"
+    (transactionCreated)="onTransactionCreated($event)">
+  </app-transaction-form>
+
+
+  @if (loading()) {
+
+    <p class="state-message">
+      Loading transactions...
+    </p>
+
+  } @else {
+
+    <section class="transactions-list">
+
+      @for (
+        transaction of transactions();
+        track transaction.uuid
+      ) {
+
+        <article class="transaction">
+
+          @if (
+            editingTransactionUuid ===
+            transaction.uuid
+          ) {
+
+            <div class="edit-transaction">
+
+              <div class="edit-fields">
+
+                <label>
+                  Date
+                  <input
+                    type="date"
+                    [(ngModel)]="editDate"
+                  >
+                </label>
+
+                <label>
+                  Amount
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    [(ngModel)]="editAmount"
+                  >
+                </label>
+
+                @if (
+                  transaction.type !== 'TRANSFER'
+                ) {
+
+                  <label>
+                    Category
+
+                    <select
+                      [(ngModel)]="editCategoryUuid"
+                    >
+
+                      @for (
+                        category of
+                          getCategoriesByType(
+                            transaction.type
+                          );
+                        track category.uuid
+                      ) {
+
+                        <option
+                          [value]="category.uuid"
+                        >
+                          @if (category.parentName) {
+                            {{ category.parentName }} /
+                          }
+
+                          {{ category.name }}
+                        </option>
+
+                      }
+
+                    </select>
+                  </label>
+
+                }
+
+                @if (
+                  transaction.type === 'EXPENSE' ||
+                  transaction.type === 'TRANSFER'
+                ) {
+
+                  <label>
+                    From account
+
+                    <select
+                      [(ngModel)]="
+                        editSourceAccountUuid
+                      "
+                    >
+
+                      @for (
+                        account of accounts();
+                        track account.uuid
+                      ) {
+
+                        <option
+                          [value]="account.uuid"
+                        >
+                          {{ account.name }}
+                        </option>
+
+                      }
+
+                    </select>
+                  </label>
+
+                }
+
+                @if (
+                  transaction.type === 'TRANSFER'
+                ) {
+
+                  <label>
+                    To account
+
+                    <select
+                      [(ngModel)]="
+                        editTargetAccountUuid
+                      "
+                    >
+
+                      @for (
+                        account of accounts();
+                        track account.uuid
+                      ) {
+
+                        <option
+                          [value]="account.uuid"
+                        >
+                          {{ account.name }}
+                        </option>
+
+                      }
+
+                    </select>
+                  </label>
+
+                }
+
+                <label class="edit-description">
+                  Description
+
+                  <input
+                    type="text"
+                    [(ngModel)]="editDescription"
+                  >
+                </label>
+
+              </div>
+
+              @if (
+                isSameTransferEdit(transaction)
+              ) {
+
+                <p class="validation-error">
+                  Source and target account
+                  must be different.
+                </p>
+
+              }
+
+              <div class="edit-actions">
+
+                <button
+                  type="button"
+                  [disabled]="
+                    editAmount <= 0 ||
+                    isSameTransferEdit(transaction)
+                  "
+                  (click)="saveEdit(transaction)"
+                >
+                  Save
+                </button>
+
+                <button
+                  type="button"
+                  (click)="cancelEdit()"
+                >
+                  Cancel
+                </button>
+
+              </div>
+
+            </div>
+
+          } @else {
+
+            <div class="transaction-main">
+
+              <div class="transaction-date">
+                {{ transaction.transactionDate }}
+              </div>
+
+              <div class="transaction-info">
+
+                <strong>
+
+                  @if (transaction.description) {
+
+                    {{ transaction.description }}
+
+                  } @else if (
+                    transaction.type === 'TRANSFER'
+                  ) {
+
+                    Transfer
+
+                  } @else {
+
+                    {{ transaction.categoryName }}
+
+                  }
+
+                </strong>
+
+                <span>
+
+                  @if (
+                    transaction.type === 'TRANSFER'
+                  ) {
+
+                    {{ transaction.sourceAccountName }}
+                    →
+                    {{ transaction.targetAccountName }}
+
+                  } @else {
+
+                    {{ transaction.categoryName }}
+                    ·
+                    {{ transaction.sourceAccountName }}
+
+                  }
+
+                </span>
+
+              </div>
+
+            </div>
+
+            <div class="transaction-actions">
+
+              <strong
+                class="amount"
+                [class.income]="
+                  transaction.type === 'INCOME'
+                "
+                [class.expense]="
+                  transaction.type === 'EXPENSE'
+                "
+              >
+
+                @if (
+                  transaction.type === 'INCOME'
+                ) {
+                  +
+                }
+
+                @if (
+                  transaction.type === 'EXPENSE'
+                ) {
+                  -
+                }
+
+                €{{
+                  transaction.amount
+                    | number:'1.2-2'
+                }}
+
+              </strong>
+
+              <button
+                type="button"
+                (click)="startEdit(transaction)"
+              >
+                Edit
+              </button>
+
+              <button
+                type="button"
+                (click)="
+                  onDeleteTransaction(
+                    transaction.uuid
+                  )
+                "
+              >
+                Delete
+              </button>
+
+            </div>
+
+          }
+
+        </article>
+
+      } @empty {
+
+        <p class="state-message">
+          No transactions yet.
+        </p>
+
+      }
+
+    </section>
+
+  }
+
+</section>

@@ -1,0 +1,162 @@
+<form
+  class="transaction-form"
+  [formGroup]="transactionForm"
+  (ngSubmit)="onSubmit()"
+>
+
+  <label>
+    Date
+    <input
+      type="date"
+      formControlName="transactionDate"
+    >
+  </label>
+
+  <label>
+    Type
+    <select formControlName="type">
+      <option value="EXPENSE">Expense</option>
+      <option value="INCOME">Income</option>
+      <option value="TRANSFER">Transfer</option>
+    </select>
+  </label>
+
+  <label>
+    Amount
+    <input
+      type="number"
+      formControlName="amount"
+      min="0.01"
+      step="0.01"
+    >
+  </label>
+
+  @if (
+    transactionForm.controls.type.value !== 'TRANSFER'
+  ) {
+
+    <label>
+      Category
+
+      <select formControlName="categoryUuid">
+
+        <option value="">
+          Select category
+        </option>
+
+        @for (
+          category of getCategoriesForSelectedType();
+          track category.uuid
+        ) {
+
+          <option [value]="category.uuid">
+
+            @if (category.parentName) {
+              {{ category.parentName }} /
+            }
+
+            {{ category.name }}
+
+          </option>
+
+        }
+
+      </select>
+    </label>
+
+  }
+
+  @if (
+    transactionForm.controls.type.value === 'EXPENSE' ||
+    transactionForm.controls.type.value === 'TRANSFER'
+  ) {
+
+    <label>
+      From account
+
+      <select formControlName="sourceAccountUuid">
+
+        <option value="">
+          Select account
+        </option>
+
+        @for (
+          account of accounts;
+          track account.uuid
+        ) {
+
+          <option [value]="account.uuid">
+            {{ account.name }}
+          </option>
+
+        }
+
+      </select>
+    </label>
+
+  }
+
+  @if (
+    transactionForm.controls.type.value === 'TRANSFER'
+  ) {
+
+    <label>
+      To account
+
+      <select formControlName="targetAccountUuid">
+
+        <option value="">
+          Select account
+        </option>
+
+        @for (
+          account of accounts;
+          track account.uuid
+        ) {
+
+          <option [value]="account.uuid">
+            {{ account.name }}
+          </option>
+
+        }
+
+      </select>
+    </label>
+
+  }
+
+  @if (
+    transactionForm.controls.type.value === 'INCOME'
+  ) {
+    <p class="income-note">
+      Income is added to your default account.
+    </p>
+  }
+
+  <label class="description">
+    Description
+
+    <input
+      type="text"
+      formControlName="description"
+      placeholder="Optional description"
+    >
+  </label>
+
+  @if (isSameTransferAccount()) {
+    <p class="validation-error">
+        Source and target account must be different.
+    </p>
+    }
+
+  <button
+    type="submit"
+    [disabled]="
+    transactionForm.invalid ||
+    isSameTransferAccount()
+    "
+  >
+    Add transaction
+  </button>
+
+</form>

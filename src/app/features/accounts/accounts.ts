@@ -1,8 +1,13 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Account, AccountUpdate } from '../../models/account';
+import { Component, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  Account,
+  AccountUpdate
+} from '../../models/account';
+
 import { AccountService } from '../../core/services/account';
 import { AccountForm } from './account-form/account-form';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-accounts',
@@ -12,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class Accounts implements OnInit {
 
-  accounts: Account[] = [];
+  accounts = signal<Account[]>([]);
 
   editingAccountUuid: string | null = null;
   editName = '';
@@ -26,24 +31,29 @@ export class Accounts implements OnInit {
   ];
 
   constructor(
-    private accountService: AccountService,
-    private cdr: ChangeDetectorRef
+    private accountService: AccountService
   ) {}
 
   ngOnInit(): void {
     this.accountService.getAccounts().subscribe({
       next: response => {
-        this.accounts = response.content;
+        this.accounts.set(response.content);
       },
+
       error: error => {
-        console.error('Failed to load accounts', error);
+        console.error(
+          'Failed to load accounts',
+          error
+        );
       }
     });
   }
 
   onAccountCreated(account: Account): void {
-    this.accounts = [...this.accounts, account];
-    this.cdr.detectChanges();
+    this.accounts.update(accounts => [
+      ...accounts,
+      account
+    ]);
   }
 
   startEdit(account: Account): void {
@@ -57,47 +67,73 @@ export class Accounts implements OnInit {
   }
 
   saveEdit(account: Account): void {
+
     const updatedAccount: AccountUpdate = {
       name: this.editName,
       balance: this.editBalance
     };
 
     this.accountService
-      .updateAccount(account.uuid, updatedAccount)
+      .updateAccount(
+        account.uuid,
+        updatedAccount
+      )
       .subscribe({
+
         next: updated => {
-          this.accounts = this.accounts.map(existing =>
-            existing.uuid === updated.uuid ? updated : existing
+
+          this.accounts.update(accounts =>
+            accounts.map(existing =>
+              existing.uuid === updated.uuid
+                ? updated
+                : existing
+            )
           );
 
           this.editingAccountUuid = null;
-
-          this.cdr.detectChanges();
         },
+
         error: error => {
-          console.error('Failed to update account', error);
+          console.error(
+            'Failed to update account',
+            error
+          );
         }
       });
   }
 
   onDeleteAccount(uuid: string): void {
-    this.accountService.deleteAccount(uuid).subscribe({
-      next: () => {
-        this.accounts = this.accounts.filter(
-          account => account.uuid !== uuid
-        );
 
-        this.cdr.detectChanges();
-      },
-      error: error => {
-        console.error('Failed to delete account', error);
-      }
-    });
+    this.accountService
+      .deleteAccount(uuid)
+      .subscribe({
+
+        next: () => {
+
+          this.accounts.update(accounts =>
+            accounts.filter(
+              account =>
+                account.uuid !== uuid
+            )
+          );
+        },
+
+        error: error => {
+          console.error(
+            'Failed to delete account',
+            error
+          );
+        }
+      });
   }
 
-  getAccountsByType(type: Account['accountType']): Account[] {
-    return this.accounts.filter(
-      account => account.accountType === type
+  getAccountsByType(
+    type: Account['accountType']
+  ): Account[] {
+
+    return this.accounts().filter(
+      account =>
+        account.accountType === type
     );
   }
 }

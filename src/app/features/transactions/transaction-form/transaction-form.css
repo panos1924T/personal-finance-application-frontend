@@ -1,0 +1,95 @@
+.transaction-form {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(160px, 1fr));
+
+  gap: 16px;
+
+  padding: 20px;
+  margin-bottom: 28px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.transaction-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.transaction-form input,
+.transaction-form select {
+  width: 100%;
+
+  padding: 10px 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  font-size: 14px;
+  background: #ffffff;
+}
+
+.transaction-form input:focus,
+.transaction-form select:focus {
+  outline: none;
+  border-color: #6b7280;
+}
+
+.description {
+  grid-column: span 2;
+}
+
+.transaction-form button {
+  align-self: end;
+
+  padding: 10px 16px;
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.transaction-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.income-note {
+  align-self: end;
+
+  margin: 0;
+  padding: 10px 12px;
+
+  font-size: 13px;
+  color: #6b7280;
+}
+
+@media (max-width: 800px) {
+  .transaction-form {
+    grid-template-columns: 1fr;
+  }
+
+  .description {
+    grid-column: auto;
+  }
+}
+
+.validation-error {
+  margin: 0;
+  align-self: end;
+
+  font-size: 13px;
+  color: #b91c1c;
+}
