@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Account, AccountCreate } from '../../models/account';
+import {
+  Account,
+  AccountCreate,
+  AccountUpdate
+} from '../../models/account';
 
 interface AccountPage {
   content: Account[];
@@ -24,7 +28,19 @@ export class AccountService {
     return this.http.post<Account>(this.apiUrl, account);
   }
 
+  updateAccount(
+    uuid: string,
+    account: AccountUpdate
+  ): Observable<Account> {
+    return this.http.put<Account>(
+      `${this.apiUrl}/${uuid}`,
+      account
+    );
+  }
+
   deleteAccount(uuid: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${uuid}`);
+    return this.http.delete<void>(
+      `${this.apiUrl}/${uuid}`
+    );
   }
 }

@@ -11,3 +11,8 @@ export interface AccountCreate {
   accountType: 'LIQUIDITY' | 'SAVINGS' | 'INVESTMENT' | 'CREDIT';
   initialBalance: number;
 }
+
+export interface AccountUpdate {
+  name: string;
+  balance: number;
+}

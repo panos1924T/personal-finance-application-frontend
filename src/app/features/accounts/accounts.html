@@ -27,20 +27,66 @@
 
               <article class="account">
 
-                <div class="account-info">
-                  <strong>{{ account.name }}</strong>
-                  <span>{{ account.accountType }}</span>
-                </div>
+                @if (editingAccountUuid === account.uuid) {
 
-                <div class="account-actions">
-                  <strong>€{{ account.balance }}</strong>
+                  <div class="edit-fields">
 
-                  <button
-                    type="button"
-                    (click)="onDeleteAccount(account.uuid)">
-                    Delete
-                  </button>
-                </div>
+                    <input
+                      type="text"
+                      [(ngModel)]="editName"
+                      placeholder="Account name"
+                    >
+
+                    <input
+                      type="number"
+                      [(ngModel)]="editBalance"
+                      step="0.01"
+                    >
+
+                  </div>
+
+                  <div class="account-actions">
+
+                    <button
+                      type="button"
+                      (click)="saveEdit(account)">
+                      Save
+                    </button>
+
+                    <button
+                      type="button"
+                      (click)="cancelEdit()">
+                      Cancel
+                    </button>
+
+                  </div>
+
+                } @else {
+
+                  <div class="account-info">
+                    <strong>{{ account.name }}</strong>
+                    <span>{{ account.accountType }}</span>
+                  </div>
+
+                  <div class="account-actions">
+
+                    <strong>€{{ account.balance }}</strong>
+
+                    <button
+                      type="button"
+                      (click)="startEdit(account)">
+                      Edit
+                    </button>
+
+                    <button
+                      type="button"
+                      (click)="onDeleteAccount(account.uuid)">
+                      Delete
+                    </button>
+
+                  </div>
+
+                }
 
               </article>
 
