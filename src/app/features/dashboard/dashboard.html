@@ -1,33 +1,168 @@
 <section class="dashboard">
-  <header>
-    <h1>Dashboard</h1>
-    <p>Overview of your finances</p>
+
+  <header class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Overview of your finances</p>
+    </div>
   </header>
 
-  <section class="summary">
-    <article>
-      <h2>Total balance</h2>
-      <p>--</p>
-    </article>
+  @if (loading()) {
 
-    <article>
-      <h2>Income</h2>
-      <p>--</p>
-    </article>
+    <p class="state-message">
+      Loading dashboard...
+    </p>
 
-    <article>
-      <h2>Expenses</h2>
-      <p>--</p>
-    </article>
+  } @else {
 
-    <article>
-      <h2>Net savings</h2>
-      <p>--</p>
-    </article>
-  </section>
+    <section class="summary">
 
-  <section class="recent-transactions">
-    <h2>Recent transactions</h2>
-    <p>No transactions loaded yet.</p>
-  </section>
+      <article>
+        <span>Total balance</span>
+
+        <strong>
+          €{{
+            totalBalance()
+              | number:'1.2-2'
+          }}
+        </strong>
+      </article>
+
+      <article>
+        <span>Income this month</span>
+
+        <strong class="income">
+          +€{{
+            monthlyIncome()
+              | number:'1.2-2'
+          }}
+        </strong>
+      </article>
+
+      <article>
+        <span>Expenses this month</span>
+
+        <strong class="expense">
+          -€{{
+            monthlyExpenses()
+              | number:'1.2-2'
+          }}
+        </strong>
+      </article>
+
+      <article>
+        <span>Net savings this month</span>
+
+        <strong
+          [class.income]="netSavings() >= 0"
+          [class.expense]="netSavings() < 0"
+        >
+          €{{
+            netSavings()
+              | number:'1.2-2'
+          }}
+        </strong>
+      </article>
+
+    </section>
+
+
+    <section class="recent-transactions">
+
+      <h2>Recent transactions</h2>
+
+      @for (
+        transaction of recentTransactions();
+        track transaction.uuid
+      ) {
+
+        <div class="transaction">
+
+          <div class="transaction-info">
+
+            <strong>
+              @if (transaction.description) {
+
+                {{ transaction.description }}
+
+              } @else if (
+                transaction.type === 'TRANSFER'
+              ) {
+
+                Transfer
+
+              } @else {
+
+                {{ transaction.categoryName }}
+
+              }
+            </strong>
+
+            <span>
+              {{ transaction.transactionDate }}
+
+              ·
+
+              @if (
+                transaction.type === 'TRANSFER'
+              ) {
+
+                {{ transaction.sourceAccountName }}
+                →
+                {{ transaction.targetAccountName }}
+
+              } @else {
+
+                {{ transaction.categoryName }}
+                ·
+                {{ transaction.sourceAccountName }}
+
+              }
+            </span>
+
+          </div>
+
+          <strong
+            class="transaction-amount"
+            [class.income]="
+              transaction.type === 'INCOME'
+            "
+            [class.expense]="
+              transaction.type === 'EXPENSE'
+            "
+          >
+
+            @if (
+              transaction.type === 'INCOME'
+            ) {
+              +
+            }
+
+            @if (
+              transaction.type === 'EXPENSE'
+            ) {
+              -
+            }
+
+            €{{
+              transaction.amount
+                | number:'1.2-2'
+            }}
+
+          </strong>
+
+        </div>
+
+      } @empty {
+
+        <p class="empty-message">
+          No transactions yet.
+        </p>
+
+      }
+
+    </section>
+
+  }
+
 </section>

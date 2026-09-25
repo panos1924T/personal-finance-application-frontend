@@ -20,8 +20,18 @@ export class AccountService {
 
   constructor(private http: HttpClient) {}
 
-  getAccounts(): Observable<AccountPage> {
-    return this.http.get<AccountPage>(this.apiUrl);
+  getAccounts(
+    size: number = 20
+  ): Observable<AccountPage> {
+
+    return this.http.get<AccountPage>(
+      this.apiUrl,
+      {
+        params: {
+          size
+        }
+      }
+    );
   }
 
   createAccount(account: AccountCreate): Observable<Account> {

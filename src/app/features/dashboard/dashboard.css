@@ -1,23 +1,137 @@
-.dashboard header {
+.page-header {
   margin-bottom: 32px;
+}
+
+.page-header h1 {
+  margin: 0 0 4px;
+}
+
+.page-header p {
+  margin: 0;
+  color: #6b7280;
 }
 
 .summary {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
   gap: 16px;
+
   margin-bottom: 32px;
 }
 
-.summary article,
-.recent-transactions {
-  border: 1px solid #ddd;
-  border-radius: 12px;
+.summary article {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
   padding: 20px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  background: #ffffff;
 }
 
-@media (max-width: 800px) {
+.summary span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.summary strong {
+  font-size: 22px;
+}
+
+.income {
+  color: #15803d;
+}
+
+.expense {
+  color: #b91c1c;
+}
+
+.recent-transactions {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.recent-transactions h2 {
+  margin: 0;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  font-size: 17px;
+}
+
+.transaction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 15px 20px;
+
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.transaction:last-child {
+  border-bottom: none;
+}
+
+.transaction-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.transaction-info strong {
+  font-size: 14px;
+}
+
+.transaction-info span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.transaction-amount {
+  flex-shrink: 0;
+
+  font-size: 14px;
+}
+
+.state-message,
+.empty-message {
+  margin: 0;
+  padding: 20px;
+
+  color: #6b7280;
+}
+
+@media (max-width: 900px) {
+
   .summary {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .transaction {
+    align-items: flex-start;
   }
 }

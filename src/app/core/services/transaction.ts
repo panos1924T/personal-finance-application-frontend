@@ -1,15 +1,27 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpParams
+} from '@angular/common/http';
+
 import { Observable } from 'rxjs';
 
 import {
   Transaction,
   TransactionCreate,
+  TransactionType,
   TransactionUpdate
 } from '../../models/transaction';
 
-interface TransactionPage {
+export interface TransactionPage {
   content: Transaction[];
+}
+
+interface TransactionQueryParams {
+  startDate?: string;
+  endDate?: string;
+  type?: TransactionType;
+  size?: number;
 }
 
 @Injectable({
@@ -22,8 +34,44 @@ export class TransactionService {
 
   constructor(private http: HttpClient) {}
 
-  getTransactions(): Observable<TransactionPage> {
-    return this.http.get<TransactionPage>(this.apiUrl);
+  getTransactions(
+    query: TransactionQueryParams = {}
+  ): Observable<TransactionPage> {
+
+    let params = new HttpParams();
+
+    if (query.startDate) {
+      params = params.set(
+        'startDate',
+        query.startDate
+      );
+    }
+
+    if (query.endDate) {
+      params = params.set(
+        'endDate',
+        query.endDate
+      );
+    }
+
+    if (query.type) {
+      params = params.set(
+        'type',
+        query.type
+      );
+    }
+
+    if (query.size) {
+      params = params.set(
+        'size',
+        query.size
+      );
+    }
+
+    return this.http.get<TransactionPage>(
+      this.apiUrl,
+      { params }
+    );
   }
 
   createTransaction(
@@ -47,7 +95,10 @@ export class TransactionService {
     );
   }
 
-  deleteTransaction(uuid: string): Observable<void> {
+  deleteTransaction(
+    uuid: string
+  ): Observable<void> {
+
     return this.http.delete<void>(
       `${this.apiUrl}/${uuid}`
     );
