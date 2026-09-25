@@ -1,28 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Account } from '../../models/account';
+import { AccountService } from '../../core/services/account';
 
 @Component({
   selector: 'app-accounts',
   imports: [],
   templateUrl: './accounts.html',
-  styleUrl: './accounts.css',
+  styleUrl: './accounts.css'
 })
-export class Accounts {
+export class Accounts implements OnInit {
 
-  accounts: Account[] = [
-    {
-      uuid: '1',
-      name: 'Cash',
-      accountType: 'LIQUIDITY',
-      balance: 350,
-      createdAt: '2026-09-25'
-    },
-    {
-      uuid: '2',
-      name: 'Savings',
-      accountType: 'SAVINGS',
-      balance: 2200,
-      createdAt: '2026-09-25'
-    }
-  ];
+  accounts: Account[] = [];
+
+  constructor(private accountService: AccountService) {}
+
+  ngOnInit(): void {
+    this.accountService.getAccounts().subscribe({
+      next: response => {
+        this.accounts = response.content;
+      },
+      error: error => {
+        console.error('Failed to load accounts', error);
+      }
+    });
+  }
 }
