@@ -1,16 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { Account } from '../../models/account';
 import { AccountService } from '../../core/services/account';
+import { AccountForm } from './account-form/account-form';
 
 @Component({
   selector: 'app-accounts',
-  imports: [],
+  imports: [AccountForm],
   templateUrl: './accounts.html',
   styleUrl: './accounts.css'
 })
 export class Accounts implements OnInit {
 
   accounts: Account[] = [];
+
+  readonly accountTypes: Account['accountType'][] = [
+    'LIQUIDITY',
+    'SAVINGS',
+    'INVESTMENT',
+    'CREDIT'
+  ];
 
   constructor(private accountService: AccountService) {}
 
@@ -23,5 +31,13 @@ export class Accounts implements OnInit {
         console.error('Failed to load accounts', error);
       }
     });
+  }
+
+  onAccountCreated(account: Account): void {
+    this.accounts.push(account);
+  }
+
+  getAccountsByType(type: Account['accountType']): Account[] {
+    return this.accounts.filter(account => account.accountType === type);
   }
 }

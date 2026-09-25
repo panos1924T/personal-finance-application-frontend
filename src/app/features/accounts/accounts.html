@@ -1,23 +1,49 @@
 <section class="accounts-page">
+
   <header class="page-header">
     <div>
       <h1>Accounts</h1>
       <p>Manage your accounts and balances</p>
     </div>
-
-    <button type="button">+ Add account</button>
   </header>
 
-  <section class="accounts-list">
-        @for (account of accounts; track account.uuid) {
-            <article class="account">
-            <div>
-                <strong>{{ account.name }}</strong>
-                <span>{{ account.accountType }}</span>
-            </div>
+  <app-account-form
+    (accountCreated)="onAccountCreated($event)">
+  </app-account-form>
 
-            <strong>€{{ account.balance }}</strong>
-            </article>
-        }
-    </section>
+  <section class="accounts-groups">
+
+    @for (type of accountTypes; track type) {
+
+      @if (getAccountsByType(type).length > 0) {
+
+        <section class="account-group">
+
+          <h2>{{ type }}</h2>
+
+          <div class="accounts-list">
+
+            @for (account of getAccountsByType(type); track account.uuid) {
+
+              <article class="account">
+                <div>
+                  <strong>{{ account.name }}</strong>
+                  <span>{{ account.accountType }}</span>
+                </div>
+
+                <strong>€{{ account.balance }}</strong>
+              </article>
+
+            }
+
+          </div>
+
+        </section>
+
+      }
+
+    }
+
+  </section>
+
 </section>

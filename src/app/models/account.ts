@@ -5,3 +5,9 @@ export interface Account {
   balance: number;
   createdAt: string;
 }
+
+export interface AccountCreate {
+  name: string;
+  accountType: 'LIQUIDITY' | 'SAVINGS' | 'INVESTMENT' | 'CREDIT';
+  initialBalance: number;
+}

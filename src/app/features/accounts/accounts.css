@@ -2,11 +2,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .page-header h1 {
-  margin-bottom: 4px;
+  margin: 0 0 4px;
 }
 
 .page-header p {
@@ -14,24 +14,19 @@
   color: #6b7280;
 }
 
-.page-header button {
-  padding: 10px 16px;
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
 .accounts-list {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
-  padding: 24px;
+  background: #ffffff;
+  overflow: hidden;
 }
 
 .account {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
+
+  padding: 18px 20px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -47,5 +42,15 @@
 
 .account span {
   color: #6b7280;
-  font-size: 14px;
+  font-size: 13px;
+}
+
+.account > strong {
+  font-size: 16px;
+}
+
+@media (max-width: 600px) {
+  .account {
+    padding: 16px;
+  }
 }

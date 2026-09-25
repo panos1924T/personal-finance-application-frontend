@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Account } from '../../models/account';
+import { Account, AccountCreate } from '../../models/account';
 
 interface AccountPage {
   content: Account[];
@@ -18,5 +18,9 @@ export class AccountService {
 
   getAccounts(): Observable<AccountPage> {
     return this.http.get<AccountPage>(this.apiUrl);
+  }
+
+  createAccount(account: AccountCreate): Observable<Account> {
+    return this.http.post<Account>(this.apiUrl, account);
   }
 }

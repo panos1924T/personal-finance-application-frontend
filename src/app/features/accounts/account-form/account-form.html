@@ -1,0 +1,38 @@
+<form [formGroup]="accountForm" (ngSubmit)="onSubmit()" class="account-form">
+
+  <label>
+    Name
+    <input
+      type="text"
+      formControlName="name"
+      placeholder="e.g. Cash"
+    >
+  </label>
+
+  <label>
+    Account type
+    <select formControlName="accountType">
+      <option value="LIQUIDITY">Liquidity</option>
+      <option value="SAVINGS">Savings</option>
+      <option value="INVESTMENT">Investment</option>
+      <option value="CREDIT">Credit</option>
+    </select>
+  </label>
+
+  <label>
+    Initial balance
+    <input
+      type="number"
+      formControlName="initialBalance"
+      step="0.01"
+    >
+  </label>
+
+  <button
+    type="submit"
+    [disabled]="accountForm.invalid"
+  >
+    Create account
+  </button>
+
+</form>
