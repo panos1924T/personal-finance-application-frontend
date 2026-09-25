@@ -1,29 +1,145 @@
 .navbar {
-  height: 64px;
-  padding: 0 32px;
+  position: sticky;
+  top: 0;
 
+  z-index: 100;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+}
+
+.navbar-inner {
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 12px 24px;
+}
+
+.navbar-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  border-bottom: 1px solid #e5e7eb;
+  gap: 16px;
+
+  margin-bottom: 10px;
 }
 
 .brand {
+  flex-shrink: 0;
+
+  color: #111827;
+
   font-size: 20px;
   font-weight: 700;
 }
 
+.logout-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #6b7280;
+
+  cursor: pointer;
+}
+
+.logout-icon-button:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.logout-icon-button svg {
+  width: 20px;
+  height: 20px;
+
+  fill: currentColor;
+}
+
 .nav-links {
   display: flex;
-  gap: 32px;
+  align-items: center;
+
+  gap: 8px;
 }
 
 .nav-links a {
+  padding: 8px 10px;
+
+  border-radius: 7px;
+
   color: #6b7280;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  white-space: nowrap;
 }
 
-.nav-links a:hover,
+.nav-links a:hover {
+  color: #111827;
+  background: #f3f4f6;
+}
+
 .nav-links a.active {
   color: #111827;
+  background: #f3f4f6;
+
+  font-weight: 600;
+}
+
+
+/* Tablet */
+@media (max-width: 800px) {
+
+  .navbar-inner {
+    padding: 12px 16px;
+  }
+
+  .nav-links {
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .nav-links a {
+    flex-shrink: 0;
+  }
+}
+
+
+/* Phone */
+@media (max-width: 520px) {
+
+  .brand {
+    font-size: 18px;
+  }
+
+  .nav-links {
+    gap: 4px;
+  }
+
+  .nav-links a {
+    padding: 7px 8px;
+    font-size: 13px;
+  }
+
+  .logout-icon-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logout-icon-button svg {
+    width: 18px;
+    height: 18px;
+  }
 }

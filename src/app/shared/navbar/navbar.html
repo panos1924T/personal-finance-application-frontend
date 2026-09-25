@@ -1,11 +1,67 @@
 <nav class="navbar">
-  <div class="brand">FinanceApp</div>
 
-  <div class="nav-links">
-    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-    <a routerLink="/accounts" routerLinkActive="active">Accounts</a>
-    <a routerLink="/transactions" routerLinkActive="active">Transactions</a>
-    <a routerLink="/categories" routerLinkActive="active">Categories</a>
-    <button type="button" (click)="logout()">Logout</button>
+  <div class="navbar-inner">
+
+    <div class="navbar-top">
+
+      <a
+        class="brand"
+        routerLink="/dashboard"
+      >
+        FinanceApp
+      </a>
+
+      <button
+        type="button"
+        class="logout-icon-button"
+        (click)="logout()"
+        aria-label="Logout"
+        title="Logout"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            d="M10 17l1.41-1.41L8.83 13H20v-2H8.83l2.58-2.59L10 7l-5 5 5 5zm8-12h-8v2h8v10h-8v2h8c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+          />
+        </svg>
+      </button>
+
+    </div>
+
+    <div class="nav-links">
+
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+      >
+        Dashboard
+      </a>
+
+      <a
+        routerLink="/accounts"
+        routerLinkActive="active"
+      >
+        Accounts
+      </a>
+
+      <a
+        routerLink="/transactions"
+        routerLinkActive="active"
+      >
+        Transactions
+      </a>
+
+      <a
+        routerLink="/categories"
+        routerLinkActive="active"
+      >
+        Categories
+      </a>
+
+    </div>
+
   </div>
+
 </nav>
