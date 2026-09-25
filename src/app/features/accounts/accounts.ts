@@ -37,7 +37,22 @@ export class Accounts implements OnInit {
     this.accounts.push(account);
   }
 
+  onDeleteAccount(uuid: string): void {
+    this.accountService.deleteAccount(uuid).subscribe({
+      next: () => {
+        this.accounts = this.accounts.filter(
+          account => account.uuid !== uuid
+        );
+      },
+      error: error => {
+        console.error('Failed to delete account', error);
+      }
+    });
+  }
+
   getAccountsByType(type: Account['accountType']): Account[] {
-    return this.accounts.filter(account => account.accountType === type);
+    return this.accounts.filter(
+      account => account.accountType === type
+    );
   }
 }

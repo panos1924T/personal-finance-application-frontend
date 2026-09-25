@@ -14,6 +14,22 @@
   color: #6b7280;
 }
 
+.accounts-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.account-group h2 {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+
+  border-bottom: 2px solid #e5e7eb;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
 .accounts-list {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -34,23 +50,52 @@
   border-bottom: none;
 }
 
-.account div {
+.account-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.account span {
+.account-info span {
   color: #6b7280;
   font-size: 13px;
 }
 
-.account > strong {
+.account-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.account-actions > strong {
   font-size: 16px;
+}
+
+.account-actions button {
+  padding: 7px 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.account-actions button:hover {
+  background: #f3f4f6;
 }
 
 @media (max-width: 600px) {
   .account {
-    padding: 16px;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .account-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
   }
 }

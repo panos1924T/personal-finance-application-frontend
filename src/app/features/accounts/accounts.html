@@ -26,12 +26,22 @@
             @for (account of getAccountsByType(type); track account.uuid) {
 
               <article class="account">
-                <div>
+
+                <div class="account-info">
                   <strong>{{ account.name }}</strong>
                   <span>{{ account.accountType }}</span>
                 </div>
 
-                <strong>€{{ account.balance }}</strong>
+                <div class="account-actions">
+                  <strong>€{{ account.balance }}</strong>
+
+                  <button
+                    type="button"
+                    (click)="onDeleteAccount(account.uuid)">
+                    Delete
+                  </button>
+                </div>
+
               </article>
 
             }

@@ -23,4 +23,8 @@ export class AccountService {
   createAccount(account: AccountCreate): Observable<Account> {
     return this.http.post<Account>(this.apiUrl, account);
   }
+
+  deleteAccount(uuid: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${uuid}`);
+  }
 }
