@@ -1,1 +1,155 @@
-<p>categories works!</p>
+<section class="categories-page">
+
+  <header class="page-header">
+    <div>
+      <h1>Categories</h1>
+      <p>Manage your income and expense categories</p>
+    </div>
+  </header>
+
+  <app-category-form
+    [categories]="categories()"
+    (categoryCreated)="onCategoryCreated($event)">
+  </app-category-form>
+
+  <section class="category-types">
+
+    @for (type of categoryTypes; track type) {
+
+      @if (getRootCategoriesByType(type).length > 0) {
+
+        <section class="category-type-group">
+
+          <h2>{{ type }}</h2>
+
+          <div class="categories-list">
+
+            @for (
+              root of getRootCategoriesByType(type);
+              track root.uuid
+            ) {
+
+              <article class="category-group">
+
+                <div class="category-root">
+
+                  @if (editingCategoryUuid === root.uuid) {
+
+                    <input
+                      class="edit-input"
+                      type="text"
+                      [(ngModel)]="editName"
+                    >
+
+                    <div class="category-actions">
+                      <button
+                        type="button"
+                        (click)="saveEdit(root)">
+                        Save
+                      </button>
+
+                      <button
+                        type="button"
+                        (click)="cancelEdit()">
+                        Cancel
+                      </button>
+                    </div>
+
+                  } @else {
+
+                    <strong>{{ root.name }}</strong>
+
+                    <div class="category-actions">
+                      <button
+                        type="button"
+                        (click)="startEdit(root)">
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        (click)="onDeleteCategory(root.uuid)">
+                        Delete
+                      </button>
+                    </div>
+
+                  }
+
+                </div>
+
+                @if (getChildren(root.uuid).length > 0) {
+
+                  <div class="category-children">
+
+                    @for (
+                      child of getChildren(root.uuid);
+                      track child.uuid
+                    ) {
+
+                      <div class="category-child">
+
+                        @if (editingCategoryUuid === child.uuid) {
+
+                          <input
+                            class="edit-input"
+                            type="text"
+                            [(ngModel)]="editName"
+                          >
+
+                          <div class="category-actions">
+                            <button
+                              type="button"
+                              (click)="saveEdit(child)">
+                              Save
+                            </button>
+
+                            <button
+                              type="button"
+                              (click)="cancelEdit()">
+                              Cancel
+                            </button>
+                          </div>
+
+                        } @else {
+
+                          <span>{{ child.name }}</span>
+
+                          <div class="category-actions">
+                            <button
+                              type="button"
+                              (click)="startEdit(child)">
+                              Edit
+                            </button>
+
+                            <button
+                              type="button"
+                              (click)="onDeleteCategory(child.uuid)">
+                              Delete
+                            </button>
+                          </div>
+
+                        }
+
+                      </div>
+
+                    }
+
+                  </div>
+
+                }
+
+              </article>
+
+            }
+
+          </div>
+
+        </section>
+
+      }
+
+    }
+
+  </section>
+
+</section>

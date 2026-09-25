@@ -1,0 +1,45 @@
+<form
+  [formGroup]="categoryForm"
+  (ngSubmit)="onSubmit()"
+  class="category-form"
+>
+
+  <label>
+    Name
+    <input
+      type="text"
+      formControlName="name"
+      placeholder="e.g. Groceries"
+    >
+  </label>
+
+  <label>
+    Type
+    <select formControlName="type">
+      <option value="EXPENSE">Expense</option>
+      <option value="INCOME">Income</option>
+      <option value="TRANSFER">Transfer</option>
+    </select>
+  </label>
+
+  <label>
+    Parent category
+    <select formControlName="parentUuid">
+      <option value="">No parent</option>
+
+      @for (category of getParentCategories(); track category.uuid) {
+        <option [value]="category.uuid">
+          {{ category.name }}
+        </option>
+      }
+    </select>
+  </label>
+
+  <button
+    type="submit"
+    [disabled]="categoryForm.invalid"
+  >
+    Create category
+  </button>
+
+</form>
