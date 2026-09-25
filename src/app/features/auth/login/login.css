@@ -1,0 +1,126 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+
+  padding: 64px 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+
+  padding: 32px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.login-header {
+  margin-bottom: 28px;
+
+  text-align: center;
+}
+
+.login-header h1 {
+  margin: 0 0 8px;
+
+  font-size: 26px;
+}
+
+.login-header p {
+  margin: 0;
+
+  color: #6b7280;
+  font-size: 14px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 11px 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+
+  border-color: #6b7280;
+
+  box-shadow:
+    0 0 0 3px rgba(107, 114, 128, 0.12);
+}
+
+button {
+  margin-top: 6px;
+
+  padding: 11px 16px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #111827;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #374151;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.field-error {
+  margin: -12px 0 0;
+
+  color: #b91c1c;
+
+  font-size: 12px;
+}
+
+@media (max-width: 500px) {
+
+  .login-page {
+    padding: 32px 12px;
+  }
+
+  .login-card {
+    padding: 24px 20px;
+  }
+}

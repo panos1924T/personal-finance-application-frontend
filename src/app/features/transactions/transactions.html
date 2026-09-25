@@ -1,17 +1,227 @@
 <section class="transactions-page">
 
   <header class="page-header">
+
     <div>
       <h1>Transactions</h1>
-      <p>Track your income, expenses and transfers</p>
+
+      <p>
+        Track your income,
+        expenses and transfers
+      </p>
     </div>
+
   </header>
+
 
   <app-transaction-form
     [accounts]="accounts()"
     [categories]="categories()"
-    (transactionCreated)="onTransactionCreated($event)">
+    (transactionCreated)="
+      onTransactionCreated($event)
+    "
+  >
   </app-transaction-form>
+
+
+  <section class="filters">
+
+    <div class="filters-header">
+
+      <div>
+        <h2>Filters</h2>
+
+        <span>
+          {{ totalElements() }}
+          transactions
+        </span>
+      </div>
+
+      <button
+        type="button"
+        class="clear-button"
+        (click)="clearFilters()"
+      >
+        Clear
+      </button>
+
+    </div>
+
+
+    <div class="filter-grid">
+
+      <label>
+        From date
+
+        <input
+          type="date"
+          [(ngModel)]="
+            filterStartDate
+          "
+        >
+      </label>
+
+
+      <label>
+        To date
+
+        <input
+          type="date"
+          [(ngModel)]="
+            filterEndDate
+          "
+        >
+      </label>
+
+
+      <label>
+        Type
+
+        <select
+          [(ngModel)]="filterType"
+          (ngModelChange)="
+            onFilterTypeChange()
+          "
+        >
+
+          <option value="">
+            All types
+          </option>
+
+          <option value="INCOME">
+            Income
+          </option>
+
+          <option value="EXPENSE">
+            Expense
+          </option>
+
+          <option value="TRANSFER">
+            Transfer
+          </option>
+
+        </select>
+      </label>
+
+
+      <label>
+        Account
+
+        <select
+          [(ngModel)]="
+            filterAccountUuid
+          "
+        >
+
+          <option value="">
+            All accounts
+          </option>
+
+          @for (
+            account of accounts();
+            track account.uuid
+          ) {
+
+            <option
+              [value]="account.uuid"
+            >
+              {{ account.name }}
+            </option>
+
+          }
+
+        </select>
+      </label>
+
+
+      <label>
+        Category
+
+        <select
+          [(ngModel)]="
+            filterCategoryUuid
+          "
+          [disabled]="
+            filterType === 'TRANSFER'
+          "
+        >
+
+          <option value="">
+            All categories
+          </option>
+
+          @for (
+            category of
+              getFilterCategories();
+            track category.uuid
+          ) {
+
+            <option
+              [value]="category.uuid"
+            >
+
+              @if (
+                category.parentName
+              ) {
+
+                {{
+                  category.parentName
+                }}
+                /
+
+              }
+
+              {{ category.name }}
+
+            </option>
+
+          }
+
+        </select>
+      </label>
+
+
+      <label>
+        Minimum amount
+
+        <input
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="0.00"
+          [(ngModel)]="
+            filterMinAmount
+          "
+        >
+      </label>
+
+
+      <label>
+        Maximum amount
+
+        <input
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="0.00"
+          [(ngModel)]="
+            filterMaxAmount
+          "
+        >
+      </label>
+
+
+      <button
+        type="button"
+        class="apply-button"
+        (click)="applyFilters()"
+      >
+        Apply filters
+      </button>
+
+    </div>
+
+  </section>
 
 
   @if (loading()) {
@@ -25,7 +235,8 @@
     <section class="transactions-list">
 
       @for (
-        transaction of transactions();
+        transaction of
+          transactions();
         track transaction.uuid
       ) {
 
@@ -42,31 +253,42 @@
 
                 <label>
                   Date
+
                   <input
                     type="date"
-                    [(ngModel)]="editDate"
+                    [(ngModel)]="
+                      editDate
+                    "
                   >
                 </label>
 
+
                 <label>
                   Amount
+
                   <input
                     type="number"
                     min="0.01"
                     step="0.01"
-                    [(ngModel)]="editAmount"
+                    [(ngModel)]="
+                      editAmount
+                    "
                   >
                 </label>
 
+
                 @if (
-                  transaction.type !== 'TRANSFER'
+                  transaction.type !==
+                  'TRANSFER'
                 ) {
 
                   <label>
                     Category
 
                     <select
-                      [(ngModel)]="editCategoryUuid"
+                      [(ngModel)]="
+                        editCategoryUuid
+                      "
                     >
 
                       @for (
@@ -78,13 +300,24 @@
                       ) {
 
                         <option
-                          [value]="category.uuid"
+                          [value]="
+                            category.uuid
+                          "
                         >
-                          @if (category.parentName) {
-                            {{ category.parentName }} /
+
+                          @if (
+                            category.parentName
+                          ) {
+
+                            {{
+                              category.parentName
+                            }}
+                            /
+
                           }
 
                           {{ category.name }}
+
                         </option>
 
                       }
@@ -94,9 +327,12 @@
 
                 }
 
+
                 @if (
-                  transaction.type === 'EXPENSE' ||
-                  transaction.type === 'TRANSFER'
+                  transaction.type ===
+                    'EXPENSE' ||
+                  transaction.type ===
+                    'TRANSFER'
                 ) {
 
                   <label>
@@ -126,8 +362,10 @@
 
                 }
 
+
                 @if (
-                  transaction.type === 'TRANSFER'
+                  transaction.type ===
+                  'TRANSFER'
                 ) {
 
                   <label>
@@ -157,27 +395,39 @@
 
                 }
 
-                <label class="edit-description">
+
+                <label
+                  class="edit-description"
+                >
                   Description
 
                   <input
                     type="text"
-                    [(ngModel)]="editDescription"
+                    [(ngModel)]="
+                      editDescription
+                    "
                   >
                 </label>
 
               </div>
 
+
               @if (
-                isSameTransferEdit(transaction)
+                isSameTransferEdit(
+                  transaction
+                )
               ) {
 
-                <p class="validation-error">
-                  Source and target account
-                  must be different.
+                <p
+                  class="validation-error"
+                >
+                  Source and target
+                  account must be
+                  different.
                 </p>
 
               }
+
 
               <div class="edit-actions">
 
@@ -185,9 +435,15 @@
                   type="button"
                   [disabled]="
                     editAmount <= 0 ||
-                    isSameTransferEdit(transaction)
+                    isSameTransferEdit(
+                      transaction
+                    )
                   "
-                  (click)="saveEdit(transaction)"
+                  (click)="
+                    saveEdit(
+                      transaction
+                    )
+                  "
                 >
                   Save
                 </button>
@@ -205,49 +461,85 @@
 
           } @else {
 
-            <div class="transaction-main">
+            <div
+              class="transaction-main"
+            >
 
-              <div class="transaction-date">
-                {{ transaction.transactionDate }}
+              <div
+                class="transaction-date"
+              >
+                {{
+                  transaction
+                    .transactionDate
+                }}
               </div>
 
-              <div class="transaction-info">
+
+              <div
+                class="transaction-info"
+              >
 
                 <strong>
 
-                  @if (transaction.description) {
+                  @if (
+                    transaction.description
+                  ) {
 
-                    {{ transaction.description }}
+                    {{
+                      transaction.description
+                    }}
 
                   } @else if (
-                    transaction.type === 'TRANSFER'
+                    transaction.type ===
+                    'TRANSFER'
                   ) {
 
                     Transfer
 
                   } @else {
 
-                    {{ transaction.categoryName }}
+                    {{
+                      transaction
+                        .categoryName
+                    }}
 
                   }
 
                 </strong>
 
+
                 <span>
 
                   @if (
-                    transaction.type === 'TRANSFER'
+                    transaction.type ===
+                    'TRANSFER'
                   ) {
 
-                    {{ transaction.sourceAccountName }}
+                    {{
+                      transaction
+                        .sourceAccountName
+                    }}
+
                     →
-                    {{ transaction.targetAccountName }}
+
+                    {{
+                      transaction
+                        .targetAccountName
+                    }}
 
                   } @else {
 
-                    {{ transaction.categoryName }}
+                    {{
+                      transaction
+                        .categoryName
+                    }}
+
                     ·
-                    {{ transaction.sourceAccountName }}
+
+                    {{
+                      transaction
+                        .sourceAccountName
+                    }}
 
                   }
 
@@ -257,26 +549,33 @@
 
             </div>
 
-            <div class="transaction-actions">
+
+            <div
+              class="transaction-actions"
+            >
 
               <strong
                 class="amount"
                 [class.income]="
-                  transaction.type === 'INCOME'
+                  transaction.type ===
+                  'INCOME'
                 "
                 [class.expense]="
-                  transaction.type === 'EXPENSE'
+                  transaction.type ===
+                  'EXPENSE'
                 "
               >
 
                 @if (
-                  transaction.type === 'INCOME'
+                  transaction.type ===
+                  'INCOME'
                 ) {
                   +
                 }
 
                 @if (
-                  transaction.type === 'EXPENSE'
+                  transaction.type ===
+                  'EXPENSE'
                 ) {
                   -
                 }
@@ -288,12 +587,18 @@
 
               </strong>
 
+
               <button
                 type="button"
-                (click)="startEdit(transaction)"
+                (click)="
+                  startEdit(
+                    transaction
+                  )
+                "
               >
                 Edit
               </button>
+
 
               <button
                 type="button"
@@ -315,12 +620,52 @@
       } @empty {
 
         <p class="state-message">
-          No transactions yet.
+          No transactions match
+          these filters.
         </p>
 
       }
 
     </section>
+
+
+    @if (totalPages() > 1) {
+
+      <nav class="pagination">
+
+        <button
+          type="button"
+          [disabled]="
+            currentPage() === 0
+          "
+          (click)="previousPage()"
+        >
+          Previous
+        </button>
+
+
+        <span>
+          Page
+          {{ currentPage() + 1 }}
+          of
+          {{ totalPages() }}
+        </span>
+
+
+        <button
+          type="button"
+          [disabled]="
+            currentPage() >=
+            totalPages() - 1
+          "
+          (click)="nextPage()"
+        >
+          Next
+        </button>
+
+      </nav>
+
+    }
 
   }
 

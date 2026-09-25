@@ -19,12 +19,19 @@ import { Category } from '../../models/category';
 
 import {
   Transaction,
+  TransactionType,
   TransactionUpdate
 } from '../../models/transaction';
 
 import { AccountService } from '../../core/services/account';
 import { CategoryService } from '../../core/services/category';
-import { TransactionService } from '../../core/services/transaction';
+
+import {
+  TransactionQueryParams,
+  TransactionService
+} from '../../core/services/transaction';
+
+import { NotificationService } from '../../core/services/notification';
 
 import { TransactionForm } from './transaction-form/transaction-form';
 
@@ -40,13 +47,48 @@ import { TransactionForm } from './transaction-form/transaction-form';
 })
 export class Transactions implements OnInit {
 
-  transactions = signal<Transaction[]>([]);
-  accounts = signal<Account[]>([]);
-  categories = signal<Category[]>([]);
+  transactions =
+    signal<Transaction[]>([]);
 
-  loading = signal(true);
+  accounts =
+    signal<Account[]>([]);
 
-  editingTransactionUuid: string | null = null;
+  categories =
+    signal<Category[]>([]);
+
+  loading =
+    signal(true);
+
+  currentPage =
+    signal(0);
+
+  totalPages =
+    signal(0);
+
+  totalElements =
+    signal(0);
+
+  readonly pageSize = 10;
+
+
+  filterStartDate = '';
+  filterEndDate = '';
+
+  filterType:
+    TransactionType | '' = '';
+
+  filterCategoryUuid = '';
+  filterAccountUuid = '';
+
+  filterMinAmount:
+    number | null = null;
+
+  filterMaxAmount:
+    number | null = null;
+
+
+  editingTransactionUuid:
+    string | null = null;
 
   editDate = '';
   editAmount = 0;
@@ -56,30 +98,37 @@ export class Transactions implements OnInit {
   editSourceAccountUuid = '';
   editTargetAccountUuid = '';
 
+
   constructor(
-    private transactionService: TransactionService,
-    private accountService: AccountService,
-    private categoryService: CategoryService
+    private transactionService:
+      TransactionService,
+
+    private accountService:
+      AccountService,
+
+    private categoryService:
+      CategoryService,
+
+    private notification:
+      NotificationService
   ) {}
+
 
   ngOnInit(): void {
 
     forkJoin({
-      transactions:
-        this.transactionService.getTransactions(),
 
       accounts:
-        this.accountService.getAccounts(),
+        this.accountService
+          .getAccounts(1000),
 
       categories:
-        this.categoryService.getCategories()
+        this.categoryService
+          .getCategories()
+
     }).subscribe({
 
       next: response => {
-
-        this.transactions.set(
-          response.transactions.content
-        );
 
         this.accounts.set(
           response.accounts.content
@@ -88,32 +137,259 @@ export class Transactions implements OnInit {
         this.categories.set(
           response.categories.content
         );
-
-        this.loading.set(false);
       },
 
       error: error => {
-        console.error(
-          'Failed to load transactions page',
-          error
-        );
 
-        this.loading.set(false);
+        this.notification.apiError(
+          error,
+          'Failed to load transaction filters.'
+        );
       }
     });
+
+    this.loadTransactions(0);
   }
+
+
+  loadTransactions(
+    page: number
+  ): void {
+
+    this.loading.set(true);
+
+    const query:
+      TransactionQueryParams = {
+
+      page,
+      size: this.pageSize
+    };
+
+    if (this.filterStartDate) {
+      query.startDate =
+        this.filterStartDate;
+    }
+
+    if (this.filterEndDate) {
+      query.endDate =
+        this.filterEndDate;
+    }
+
+    if (this.filterType) {
+      query.type =
+        this.filterType;
+    }
+
+    if (this.filterCategoryUuid) {
+      query.categoryUuid =
+        this.filterCategoryUuid;
+    }
+
+    if (this.filterAccountUuid) {
+      query.accountUuid =
+        this.filterAccountUuid;
+    }
+
+    if (
+      this.filterMinAmount !== null
+    ) {
+      query.minAmount =
+        this.filterMinAmount;
+    }
+
+    if (
+      this.filterMaxAmount !== null
+    ) {
+      query.maxAmount =
+        this.filterMaxAmount;
+    }
+
+    this.transactionService
+      .getTransactions(query)
+      .subscribe({
+
+        next: response => {
+
+          this.transactions.set(
+            response.content
+          );
+
+          this.currentPage.set(
+            response.number
+          );
+
+          this.totalPages.set(
+            response.totalPages
+          );
+
+          this.totalElements.set(
+            response.totalElements
+          );
+
+          this.loading.set(false);
+        },
+
+        error: error => {
+
+          this.notification.apiError(
+            error,
+            'Failed to load transactions.'
+          );
+
+          this.loading.set(false);
+        }
+      });
+  }
+
+
+  applyFilters(): void {
+
+    if (
+      this.filterStartDate &&
+      this.filterEndDate &&
+      this.filterStartDate >
+        this.filterEndDate
+    ) {
+
+      this.notification.error(
+        'Start date cannot be after end date.'
+      );
+
+      return;
+    }
+
+    if (
+      this.filterMinAmount !== null &&
+      this.filterMaxAmount !== null &&
+      this.filterMinAmount >
+        this.filterMaxAmount
+    ) {
+
+      this.notification.error(
+        'Minimum amount cannot be greater than maximum amount.'
+      );
+
+      return;
+    }
+
+    this.loadTransactions(0);
+  }
+
+
+  clearFilters(): void {
+
+    this.filterStartDate = '';
+    this.filterEndDate = '';
+
+    this.filterType = '';
+
+    this.filterCategoryUuid = '';
+    this.filterAccountUuid = '';
+
+    this.filterMinAmount = null;
+    this.filterMaxAmount = null;
+
+    this.loadTransactions(0);
+  }
+
+
+  onFilterTypeChange(): void {
+
+    if (
+      this.filterType === 'TRANSFER'
+    ) {
+
+      this.filterCategoryUuid = '';
+      return;
+    }
+
+    if (
+      this.filterType &&
+      this.filterCategoryUuid
+    ) {
+
+      const selectedCategory =
+        this.categories().find(
+          category =>
+            category.uuid ===
+            this.filterCategoryUuid
+        );
+
+      if (
+        selectedCategory &&
+        selectedCategory.type !==
+          this.filterType
+      ) {
+
+        this.filterCategoryUuid = '';
+      }
+    }
+  }
+
+
+  getFilterCategories():
+    Category[] {
+
+    if (
+      this.filterType === 'TRANSFER'
+    ) {
+      return [];
+    }
+
+    if (!this.filterType) {
+
+      return this.categories().filter(
+        category =>
+          category.type !== 'TRANSFER'
+      );
+    }
+
+    return this.categories().filter(
+      category =>
+        category.type ===
+        this.filterType
+    );
+  }
+
+
+  previousPage(): void {
+
+    if (
+      this.currentPage() > 0
+    ) {
+
+      this.loadTransactions(
+        this.currentPage() - 1
+      );
+    }
+  }
+
+
+  nextPage(): void {
+
+    if (
+      this.currentPage() <
+      this.totalPages() - 1
+    ) {
+
+      this.loadTransactions(
+        this.currentPage() + 1
+      );
+    }
+  }
+
 
   onTransactionCreated(
     transaction: Transaction
   ): void {
 
-    this.transactions.update(transactions => [
-      transaction,
-      ...transactions
-    ]);
+    this.loadTransactions(0);
   }
 
-  startEdit(transaction: Transaction): void {
+
+  startEdit(
+    transaction: Transaction
+  ): void {
 
     this.editingTransactionUuid =
       transaction.uuid;
@@ -137,11 +413,16 @@ export class Transactions implements OnInit {
       transaction.targetAccountUuid ?? '';
   }
 
+
   cancelEdit(): void {
+
     this.editingTransactionUuid = null;
   }
 
-  saveEdit(transaction: Transaction): void {
+
+  saveEdit(
+    transaction: Transaction
+  ): void {
 
     if (
       this.editAmount <= 0 ||
@@ -150,28 +431,39 @@ export class Transactions implements OnInit {
       return;
     }
 
-    const updatedTransaction: TransactionUpdate = {
+    const updatedTransaction:
+      TransactionUpdate = {
 
-      transactionDate: this.editDate,
+      transactionDate:
+        this.editDate,
 
-      amount: this.editAmount,
+      amount:
+        this.editAmount,
 
       description:
-        this.editDescription.trim() || null,
+        this.editDescription
+          .trim() || null,
 
       categoryUuid:
-        transaction.type === 'TRANSFER'
+        transaction.type ===
+        'TRANSFER'
           ? null
-          : this.editCategoryUuid || null,
+          : this.editCategoryUuid ||
+            null,
 
       sourceAccountUuid:
-        transaction.type === 'INCOME'
-          ? transaction.sourceAccountUuid
-          : this.editSourceAccountUuid || null,
+        transaction.type ===
+        'INCOME'
+          ? transaction
+              .sourceAccountUuid
+          : this.editSourceAccountUuid ||
+            null,
 
       targetAccountUuid:
-        transaction.type === 'TRANSFER'
-          ? this.editTargetAccountUuid || null
+        transaction.type ===
+        'TRANSFER'
+          ? this.editTargetAccountUuid ||
+            null
           : null
     };
 
@@ -182,30 +474,43 @@ export class Transactions implements OnInit {
       )
       .subscribe({
 
-        next: updated => {
+        next: () => {
 
-          this.transactions.update(
-            transactions =>
-              transactions.map(existing =>
-                existing.uuid === updated.uuid
-                  ? updated
-                  : existing
-              )
+          this.editingTransactionUuid =
+            null;
+
+          this.notification.success(
+            'Transaction updated successfully.'
           );
 
-          this.editingTransactionUuid = null;
+          this.loadTransactions(
+            this.currentPage()
+          );
         },
 
         error: error => {
-          console.error(
-            'Failed to update transaction',
-            error
+
+          this.notification.apiError(
+            error,
+            'Failed to update transaction.'
           );
         }
       });
   }
 
-  onDeleteTransaction(uuid: string): void {
+
+  onDeleteTransaction(
+    uuid: string
+  ): void {
+
+    const confirmed =
+      window.confirm(
+        'Delete this transaction? Its effect on account balances will be reversed.'
+      );
+
+    if (!confirmed) {
+      return;
+    }
 
     this.transactionService
       .deleteTransaction(uuid)
@@ -213,41 +518,58 @@ export class Transactions implements OnInit {
 
         next: () => {
 
-          this.transactions.update(
-            transactions =>
-              transactions.filter(
-                transaction =>
-                  transaction.uuid !== uuid
-              )
+          const targetPage =
+            this.transactions()
+              .length === 1 &&
+            this.currentPage() > 0
+              ? this.currentPage() - 1
+              : this.currentPage();
+
+          this.notification.success(
+            'Transaction deleted successfully.'
+          );
+
+          this.loadTransactions(
+            targetPage
           );
         },
 
         error: error => {
-          console.error(
-            'Failed to delete transaction',
-            error
+
+          this.notification.apiError(
+            error,
+            'Failed to delete transaction.'
           );
         }
       });
   }
+
 
   getCategoriesByType(
     type: Transaction['type']
   ): Category[] {
 
     return this.categories().filter(
-      category => category.type === type
+      category =>
+        category.type === type
     );
   }
+
 
   isSameTransferEdit(
     transaction: Transaction
   ): boolean {
 
     return (
-      transaction.type === 'TRANSFER' &&
-      this.editSourceAccountUuid !== '' &&
-      this.editTargetAccountUuid !== '' &&
+      transaction.type ===
+        'TRANSFER' &&
+
+      this.editSourceAccountUuid !==
+        '' &&
+
+      this.editTargetAccountUuid !==
+        '' &&
+
       this.editSourceAccountUuid ===
         this.editTargetAccountUuid
     );

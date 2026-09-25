@@ -1,4 +1,8 @@
-<app-navbar></app-navbar>
+<app-notification></app-notification>
+
+@if (showNavbar()) {
+  <app-navbar></app-navbar>
+}
 
 <main class="app-content">
   <router-outlet></router-outlet>

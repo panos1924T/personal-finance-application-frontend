@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   Output
 } from '@angular/core';
@@ -21,6 +22,7 @@ import {
 } from '../../../models/transaction';
 
 import { TransactionService } from '../../../core/services/transaction';
+import { NotificationService } from '../../../core/services/notification';
 
 @Component({
   selector: 'app-transaction-form',
@@ -30,86 +32,63 @@ import { TransactionService } from '../../../core/services/transaction';
 })
 export class TransactionForm {
 
-  @Input() accounts: Account[] = [];
-  @Input() categories: Category[] = [];
+  private fb = inject(FormBuilder);
+
+  private transactionService =
+    inject(TransactionService);
+
+  private notification =
+    inject(NotificationService);
+
+  @Input()
+  accounts: Account[] = [];
+
+  @Input()
+  categories: Category[] = [];
 
   @Output()
-  transactionCreated = new EventEmitter<Transaction>();
+  transactionCreated =
+    new EventEmitter<Transaction>();
 
-  transactionForm;
+  transactionForm = this.fb.nonNullable.group({
 
-  isSameTransferAccount(): boolean {
+    transactionDate: [
+      this.getToday(),
+      Validators.required
+    ],
 
-    if (
-      this.transactionForm.controls.type.value !== 'TRANSFER'
-    ) {
-      return false;
-    }
+    type: [
+      'EXPENSE' as TransactionType,
+      Validators.required
+    ],
 
-    const source =
-      this.transactionForm.controls.sourceAccountUuid.value;
+    amount: [
+      0,
+      [
+        Validators.required,
+        Validators.min(0.01)
+      ]
+    ],
 
-    const target =
-      this.transactionForm.controls.targetAccountUuid.value;
+    description: [''],
 
-    return (
-      source !== '' &&
-      target !== '' &&
-      source === target
+    categoryUuid: [''],
+
+    sourceAccountUuid: [''],
+
+    targetAccountUuid: ['']
+  });
+
+  constructor() {
+
+    this.updateValidators(
+      this.transactionForm.controls.type.value
     );
-  }
 
-  private getToday(): string {
-
-    const today = new Date();
-
-    const year = today.getFullYear();
-
-    const month = String(
-      today.getMonth() + 1
-    ).padStart(2, '0');
-
-    const day = String(
-      today.getDate()
-    ).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-  } 
-
-  constructor(
-    private fb: FormBuilder,
-    private transactionService: TransactionService
-  ) {
-
-    this.transactionForm = this.fb.nonNullable.group({
-      transactionDate: [
-        this.getToday(),
-        Validators.required
-      ],
-
-      type: [
-        'EXPENSE' as TransactionType,
-        Validators.required
-      ],
-
-      amount: [
-        0,
-        [
-          Validators.required,
-          Validators.min(0.01)
-        ]
-      ],
-
-      description: [''],
-      categoryUuid: [''],
-      sourceAccountUuid: [''],
-      targetAccountUuid: ['']
-    });
-
-    this.updateValidators('EXPENSE');
-
-    this.transactionForm.controls.type.valueChanges
+    this.transactionForm.controls.type
+      .valueChanges
       .subscribe(type => {
+
         this.updateValidators(type);
 
         this.transactionForm.patchValue({
@@ -125,36 +104,54 @@ export class TransactionForm {
     if (
       this.transactionForm.invalid ||
       this.isSameTransferAccount()
-      ) {
-        return;
+    ) {
+      return;
     }
 
-    const value = this.transactionForm.getRawValue();
+    const value =
+      this.transactionForm.getRawValue();
 
     const transaction: TransactionCreate = {
-      transactionDate: value.transactionDate,
-      type: value.type,
-      amount: value.amount,
+
+      transactionDate:
+        value.transactionDate,
+
+      type:
+        value.type,
+
+      amount:
+        value.amount,
 
       description:
         value.description.trim() || null,
 
       categoryUuid:
-        value.categoryUuid || null,
+        value.type === 'TRANSFER'
+          ? null
+          : value.categoryUuid || null,
 
       sourceAccountUuid:
-        value.sourceAccountUuid || null,
+        value.type === 'INCOME'
+          ? null
+          : value.sourceAccountUuid || null,
 
       targetAccountUuid:
-        value.targetAccountUuid || null
+        value.type === 'TRANSFER'
+          ? value.targetAccountUuid || null
+          : null
     };
 
     this.transactionService
       .createTransaction(transaction)
       .subscribe({
+
         next: created => {
 
           this.transactionCreated.emit(created);
+
+          this.notification.success(
+            'Transaction created successfully.'
+          );
 
           this.transactionForm.reset({
             transactionDate: this.getToday(),
@@ -170,9 +167,10 @@ export class TransactionForm {
         },
 
         error: error => {
-          console.error(
-            'Failed to create transaction',
-            error
+
+          this.notification.apiError(
+            error,
+            'Failed to create transaction.'
           );
         }
       });
@@ -188,7 +186,32 @@ export class TransactionForm {
     }
 
     return this.categories.filter(
-      category => category.type === type
+      category =>
+        category.type === type
+    );
+  }
+
+  isSameTransferAccount(): boolean {
+
+    if (
+      this.transactionForm.controls.type.value !==
+      'TRANSFER'
+    ) {
+      return false;
+    }
+
+    const source =
+      this.transactionForm.controls
+        .sourceAccountUuid.value;
+
+    const target =
+      this.transactionForm.controls
+        .targetAccountUuid.value;
+
+    return (
+      source !== '' &&
+      target !== '' &&
+      source === target
     );
   }
 
@@ -200,22 +223,25 @@ export class TransactionForm {
       this.transactionForm.controls.categoryUuid;
 
     const source =
-      this.transactionForm.controls.sourceAccountUuid;
+      this.transactionForm.controls
+        .sourceAccountUuid;
 
     const target =
-      this.transactionForm.controls.targetAccountUuid;
+      this.transactionForm.controls
+        .targetAccountUuid;
 
     category.clearValidators();
     source.clearValidators();
     target.clearValidators();
 
     if (type === 'INCOME') {
+
       category.setValidators(
         Validators.required
       );
-    }
 
-    if (type === 'EXPENSE') {
+    } else if (type === 'EXPENSE') {
+
       category.setValidators(
         Validators.required
       );
@@ -223,9 +249,9 @@ export class TransactionForm {
       source.setValidators(
         Validators.required
       );
-    }
 
-    if (type === 'TRANSFER') {
+    } else {
+
       source.setValidators(
         Validators.required
       );
@@ -238,5 +264,25 @@ export class TransactionForm {
     category.updateValueAndValidity();
     source.updateValueAndValidity();
     target.updateValueAndValidity();
+  }
+
+  private getToday(): string {
+
+    const today = new Date();
+
+    const year =
+      today.getFullYear();
+
+    const month =
+      String(
+        today.getMonth() + 1
+      ).padStart(2, '0');
+
+    const day =
+      String(
+        today.getDate()
+      ).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 }

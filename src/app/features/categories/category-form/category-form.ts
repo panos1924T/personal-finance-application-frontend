@@ -1,7 +1,23 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Category, CategoryCreate } from '../../../models/category';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output
+} from '@angular/core';
+
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+
+import {
+  Category,
+  CategoryCreate
+} from '../../../models/category';
+
 import { CategoryService } from '../../../core/services/category';
+import { NotificationService } from '../../../core/services/notification';
 
 @Component({
   selector: 'app-category-form',
@@ -11,44 +27,76 @@ import { CategoryService } from '../../../core/services/category';
 })
 export class CategoryForm {
 
-  @Input() categories: Category[] = [];
+  @Input()
+  categories: Category[] = [];
 
-  @Output() categoryCreated = new EventEmitter<Category>();
+  @Output()
+  categoryCreated =
+    new EventEmitter<Category>();
 
   categoryForm;
 
   constructor(
     private fb: FormBuilder,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private notification: NotificationService
   ) {
-    this.categoryForm = this.fb.nonNullable.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      type: [
-        'EXPENSE' as CategoryCreate['type'],
-        Validators.required
-      ],
-      parentUuid: ['']
-    });
+
+    this.categoryForm =
+      this.fb.nonNullable.group({
+
+        name: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3)
+          ]
+        ],
+
+        type: [
+          'EXPENSE' as CategoryCreate['type'],
+          Validators.required
+        ],
+
+        parentUuid: ['']
+      });
   }
 
   onSubmit(): void {
+
     if (this.categoryForm.invalid) {
       return;
     }
 
-    const formValue = this.categoryForm.getRawValue();
+    const formValue =
+      this.categoryForm.getRawValue();
 
-    const category: CategoryCreate = {
-      name: formValue.name,
-      type: formValue.type,
-      parentUuid: formValue.parentUuid || null
+    const category:
+      CategoryCreate = {
+
+      name:
+        formValue.name,
+
+      type:
+        formValue.type,
+
+      parentUuid:
+        formValue.parentUuid || null
     };
 
     this.categoryService
       .createCategory(category)
       .subscribe({
+
         next: created => {
-          this.categoryCreated.emit(created);
+
+          this.categoryCreated.emit(
+            created
+          );
+
+          this.notification.success(
+            'Category created successfully.'
+          );
 
           this.categoryForm.reset({
             name: '',
@@ -56,19 +104,30 @@ export class CategoryForm {
             parentUuid: ''
           });
         },
+
         error: error => {
-          console.error('Failed to create category', error);
+
+          this.notification.apiError(
+            error,
+            'Failed to create category.'
+          );
         }
       });
   }
 
-  getParentCategories(): Category[] {
-  const selectedType = this.categoryForm.controls.type.value;
+  getParentCategories():
+    Category[] {
 
-  return this.categories.filter(
-    category =>
-      category.group &&
-      category.type === selectedType
-  );
-}
+    const selectedType =
+      this.categoryForm
+        .controls
+        .type
+        .value;
+
+    return this.categories.filter(
+      category =>
+        category.group &&
+        category.type === selectedType
+    );
+  }
 }

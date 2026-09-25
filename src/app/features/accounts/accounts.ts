@@ -1,4 +1,9 @@
-import { Component, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  signal
+} from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -7,70 +12,108 @@ import {
 } from '../../models/account';
 
 import { AccountService } from '../../core/services/account';
+import { NotificationService } from '../../core/services/notification';
+
 import { AccountForm } from './account-form/account-form';
 
 @Component({
   selector: 'app-accounts',
-  imports: [AccountForm, FormsModule],
+  imports: [
+    AccountForm,
+    FormsModule
+  ],
   templateUrl: './accounts.html',
   styleUrl: './accounts.css'
 })
 export class Accounts implements OnInit {
 
-  accounts = signal<Account[]>([]);
+  accounts =
+    signal<Account[]>([]);
 
-  editingAccountUuid: string | null = null;
+  editingAccountUuid:
+    string | null = null;
+
   editName = '';
   editBalance = 0;
 
-  readonly accountTypes: Account['accountType'][] = [
-    'LIQUIDITY',
-    'SAVINGS',
-    'INVESTMENT',
-    'CREDIT'
-  ];
+  readonly accountTypes:
+    Account['accountType'][] = [
+      'LIQUIDITY',
+      'SAVINGS',
+      'INVESTMENT',
+      'CREDIT'
+    ];
 
   constructor(
-    private accountService: AccountService
+    private accountService: AccountService,
+    private notification: NotificationService
   ) {}
 
   ngOnInit(): void {
-    this.accountService.getAccounts().subscribe({
-      next: response => {
-        this.accounts.set(response.content);
-      },
 
-      error: error => {
-        console.error(
-          'Failed to load accounts',
-          error
-        );
-      }
-    });
+    this.accountService
+      .getAccounts()
+      .subscribe({
+
+        next: response => {
+
+          this.accounts.set(
+            response.content
+          );
+        },
+
+        error: error => {
+
+          this.notification.apiError(
+            error,
+            'Failed to load accounts.'
+          );
+        }
+      });
   }
 
-  onAccountCreated(account: Account): void {
-    this.accounts.update(accounts => [
-      ...accounts,
-      account
-    ]);
+  onAccountCreated(
+    account: Account
+  ): void {
+
+    this.accounts.update(
+      accounts => [
+        ...accounts,
+        account
+      ]
+    );
   }
 
-  startEdit(account: Account): void {
-    this.editingAccountUuid = account.uuid;
-    this.editName = account.name;
-    this.editBalance = account.balance;
+  startEdit(
+    account: Account
+  ): void {
+
+    this.editingAccountUuid =
+      account.uuid;
+
+    this.editName =
+      account.name;
+
+    this.editBalance =
+      account.balance;
   }
 
   cancelEdit(): void {
     this.editingAccountUuid = null;
   }
 
-  saveEdit(account: Account): void {
+  saveEdit(
+    account: Account
+  ): void {
 
-    const updatedAccount: AccountUpdate = {
-      name: this.editName,
-      balance: this.editBalance
+    const updatedAccount:
+      AccountUpdate = {
+
+      name:
+        this.editName,
+
+      balance:
+        this.editBalance
     };
 
     this.accountService
@@ -82,27 +125,47 @@ export class Accounts implements OnInit {
 
         next: updated => {
 
-          this.accounts.update(accounts =>
-            accounts.map(existing =>
-              existing.uuid === updated.uuid
-                ? updated
-                : existing
-            )
+          this.accounts.update(
+            accounts =>
+              accounts.map(
+                existing =>
+                  existing.uuid ===
+                  updated.uuid
+                    ? updated
+                    : existing
+              )
           );
 
-          this.editingAccountUuid = null;
+          this.editingAccountUuid =
+            null;
+
+          this.notification.success(
+            'Account updated successfully.'
+          );
         },
 
         error: error => {
-          console.error(
-            'Failed to update account',
-            error
+
+          this.notification.apiError(
+            error,
+            'Failed to update account.'
           );
         }
       });
   }
 
-  onDeleteAccount(uuid: string): void {
+  onDeleteAccount(
+    uuid: string
+  ): void {
+
+    const confirmed =
+      window.confirm(
+        'Delete this account?'
+      );
+
+    if (!confirmed) {
+      return;
+    }
 
     this.accountService
       .deleteAccount(uuid)
@@ -110,18 +173,24 @@ export class Accounts implements OnInit {
 
         next: () => {
 
-          this.accounts.update(accounts =>
-            accounts.filter(
-              account =>
-                account.uuid !== uuid
-            )
+          this.accounts.update(
+            accounts =>
+              accounts.filter(
+                account =>
+                  account.uuid !== uuid
+              )
+          );
+
+          this.notification.success(
+            'Account deleted successfully.'
           );
         },
 
         error: error => {
-          console.error(
-            'Failed to delete account',
-            error
+
+          this.notification.apiError(
+            error,
+            'Failed to delete account.'
           );
         }
       });

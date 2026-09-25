@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import {
   HttpClient,
   HttpParams
@@ -15,12 +16,30 @@ import {
 
 export interface TransactionPage {
   content: Transaction[];
+
+  totalPages: number;
+  totalElements: number;
+
+  size: number;
+  number: number;
+
+  first: boolean;
+  last: boolean;
 }
 
-interface TransactionQueryParams {
+export interface TransactionQueryParams {
   startDate?: string;
   endDate?: string;
+
   type?: TransactionType;
+
+  categoryUuid?: string;
+  accountUuid?: string;
+
+  minAmount?: number;
+  maxAmount?: number;
+
+  page?: number;
   size?: number;
 }
 
@@ -32,13 +51,16 @@ export class TransactionService {
   private readonly apiUrl =
     'http://localhost:8080/api/v1/transactions';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient
+  ) {}
 
   getTransactions(
     query: TransactionQueryParams = {}
   ): Observable<TransactionPage> {
 
-    let params = new HttpParams();
+    let params =
+      new HttpParams();
 
     if (query.startDate) {
       params = params.set(
@@ -61,17 +83,61 @@ export class TransactionService {
       );
     }
 
-    if (query.size) {
+    if (query.categoryUuid) {
+      params = params.set(
+        'categoryUuid',
+        query.categoryUuid
+      );
+    }
+
+    if (query.accountUuid) {
+      params = params.set(
+        'accountUuid',
+        query.accountUuid
+      );
+    }
+
+    if (
+      query.minAmount !== undefined
+    ) {
+      params = params.set(
+        'minAmount',
+        query.minAmount
+      );
+    }
+
+    if (
+      query.maxAmount !== undefined
+    ) {
+      params = params.set(
+        'maxAmount',
+        query.maxAmount
+      );
+    }
+
+    if (
+      query.page !== undefined
+    ) {
+      params = params.set(
+        'page',
+        query.page
+      );
+    }
+
+    if (
+      query.size !== undefined
+    ) {
       params = params.set(
         'size',
         query.size
       );
     }
 
-    return this.http.get<TransactionPage>(
-      this.apiUrl,
-      { params }
-    );
+    return this.http
+      .get<TransactionPage>(
+        this.apiUrl,
+        { params }
+      );
   }
 
   createTransaction(

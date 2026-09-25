@@ -1,0 +1,23 @@
+@if (notificationService.message(); as message) {
+
+  <div
+    class="notification"
+    [class.success]="message.type === 'success'"
+    [class.error]="message.type === 'error'"
+    role="status"
+  >
+
+    <span>
+      {{ message.text }}
+    </span>
+
+    <button
+      type="button"
+      (click)="notificationService.clear()"
+    >
+      ×
+    </button>
+
+  </div>
+
+}
