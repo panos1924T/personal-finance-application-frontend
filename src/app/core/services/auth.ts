@@ -17,14 +17,29 @@ interface LoginResponse {
 export class AuthService {
 
   private readonly apiUrl =
-    'http://localhost:8080/api/v1/auth/authenticate';
+    '/api/v1/auth/authenticate';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient
+  ) {}
 
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.apiUrl, credentials).pipe(
-      tap(response => localStorage.setItem('token', response.token))
-    );
+  login(
+    credentials: LoginRequest
+  ): Observable<LoginResponse> {
+
+    return this.http
+      .post<LoginResponse>(
+        this.apiUrl,
+        credentials
+      )
+      .pipe(
+        tap(response =>
+          localStorage.setItem(
+            'token',
+            response.token
+          )
+        )
+      );
   }
 
   logout(): void {

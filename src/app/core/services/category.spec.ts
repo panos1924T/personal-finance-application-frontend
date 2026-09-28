@@ -1,13 +1,24 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Category } from './category';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
-describe('Category', () => {
-  let service: Category;
+import { CategoryService } from './category';
+
+describe('CategoryService', () => {
+
+  let service: CategoryService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Category);
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
+    });
+
+    service = TestBed.inject(CategoryService);
   });
 
   it('should be created', () => {

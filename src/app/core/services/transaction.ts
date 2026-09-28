@@ -49,7 +49,7 @@ export interface TransactionQueryParams {
 export class TransactionService {
 
   private readonly apiUrl =
-    'http://localhost:8080/api/v1/transactions';
+    '/api/v1/transactions';
 
   constructor(
     private http: HttpClient
@@ -59,8 +59,7 @@ export class TransactionService {
     query: TransactionQueryParams = {}
   ): Observable<TransactionPage> {
 
-    let params =
-      new HttpParams();
+    let params = new HttpParams();
 
     if (query.startDate) {
       params = params.set(
@@ -133,11 +132,10 @@ export class TransactionService {
       );
     }
 
-    return this.http
-      .get<TransactionPage>(
-        this.apiUrl,
-        { params }
-      );
+    return this.http.get<TransactionPage>(
+      this.apiUrl,
+      { params }
+    );
   }
 
   createTransaction(

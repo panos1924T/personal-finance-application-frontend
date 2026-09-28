@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
 import {
   Account,
   AccountCreate,
@@ -16,9 +17,12 @@ interface AccountPage {
 })
 export class AccountService {
 
-  private readonly apiUrl = 'http://localhost:8080/api/v1/accounts';
+  private readonly apiUrl =
+    '/api/v1/accounts';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient
+  ) {}
 
   getAccounts(
     size: number = 20
@@ -34,21 +38,31 @@ export class AccountService {
     );
   }
 
-  createAccount(account: AccountCreate): Observable<Account> {
-    return this.http.post<Account>(this.apiUrl, account);
+  createAccount(
+    account: AccountCreate
+  ): Observable<Account> {
+
+    return this.http.post<Account>(
+      this.apiUrl,
+      account
+    );
   }
 
   updateAccount(
     uuid: string,
     account: AccountUpdate
   ): Observable<Account> {
+
     return this.http.put<Account>(
       `${this.apiUrl}/${uuid}`,
       account
     );
   }
 
-  deleteAccount(uuid: string): Observable<void> {
+  deleteAccount(
+    uuid: string
+  ): Observable<void> {
+
     return this.http.delete<void>(
       `${this.apiUrl}/${uuid}`
     );
