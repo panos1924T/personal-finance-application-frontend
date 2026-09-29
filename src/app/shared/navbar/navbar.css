@@ -28,14 +28,60 @@
   margin-bottom: 10px;
 }
 
+
+/* Brand */
+
 .brand {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 9px;
+
   flex-shrink: 0;
 
   color: #111827;
-
-  font-size: 20px;
-  font-weight: 700;
 }
+
+.brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  border-radius: 10px;
+
+  background: #e8f3ef;
+  color: #185c4b;
+
+  flex-shrink: 0;
+}
+
+.brand-icon svg {
+  display: block;
+
+  width: 23px;
+  height: 23px;
+
+  fill: currentColor;
+}
+
+.brand-icon .wallet-dot {
+  fill: #e8f3ef;
+}
+
+.brand-text {
+  font-size: 22px;
+  font-weight: 700;
+
+  letter-spacing: 0.01em;
+
+  line-height: 1;
+}
+
+
+/* Logout */
 
 .logout-icon-button {
   display: inline-flex;
@@ -65,6 +111,9 @@
 
   fill: currentColor;
 }
+
+
+/* Navigation */
 
 .nav-links {
   display: flex;
@@ -100,6 +149,7 @@
 
 
 /* Tablet */
+
 @media (max-width: 800px) {
 
   .navbar-inner {
@@ -108,6 +158,7 @@
 
   .nav-links {
     overflow-x: auto;
+
     padding-bottom: 2px;
   }
 
@@ -118,10 +169,27 @@
 
 
 /* Phone */
+
 @media (max-width: 520px) {
 
   .brand {
-    font-size: 18px;
+    gap: 8px;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 9px;
+  }
+
+  .brand-icon svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .brand-text {
+    font-size: 20px;
   }
 
   .nav-links {
@@ -130,6 +198,7 @@
 
   .nav-links a {
     padding: 7px 8px;
+
     font-size: 13px;
   }
 
