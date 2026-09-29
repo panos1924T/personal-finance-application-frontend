@@ -407,3 +407,23 @@
     gap: 8px;
   }
 }
+
+@media (max-width: 800px) {
+  .edit-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .edit-fields > * {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 550px) {
+  .filter-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .filter-grid > * {
+    min-width: 0;
+  }
+}

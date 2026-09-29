@@ -93,3 +93,13 @@
   font-size: 13px;
   color: #b91c1c;
 }
+
+@media (max-width: 800px) {
+  .transaction-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .transaction-form > * {
+    min-width: 0;
+  }
+}
