@@ -147,6 +147,22 @@
   font-weight: 600;
 }
 
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.display-name {
+  max-width: 220px;
+  overflow: hidden;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 
 /* Tablet */
 

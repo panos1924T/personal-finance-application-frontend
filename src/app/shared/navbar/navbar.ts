@@ -11,7 +11,7 @@ import { AuthService } from '../../core/services/auth';
 export class Navbar {
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router
   ) {}
 

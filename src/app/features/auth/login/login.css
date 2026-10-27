@@ -39,6 +39,23 @@
   font-size: 14px;
 }
 
+.login-card > p {
+  margin: 20px 0 0;
+  color: #6b7280;
+  text-align: center;
+  font-size: 14px;
+}
+
+.login-card a {
+  color: #185c4b;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-card a:hover {
+  text-decoration: underline;
+}
+
 form {
   display: flex;
   flex-direction: column;
