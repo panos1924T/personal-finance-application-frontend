@@ -30,7 +30,9 @@ export class App {
   private router = inject(Router);
 
   showNavbar = signal(
-    this.router.url.split('?')[0] !== '/login'
+    !['/login', '/register'].includes(
+      this.router.url.split('?')[0]
+    )
   );
 
   constructor() {
@@ -49,7 +51,7 @@ export class App {
             .split('?')[0];
 
         this.showNavbar.set(
-          path !== '/login'
+          path !== '/login' && path !== '/register'
         );
       });
   }
