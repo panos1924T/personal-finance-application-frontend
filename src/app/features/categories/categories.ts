@@ -190,21 +190,35 @@ export class Categories implements OnInit {
     type: Category['type']
   ): Category[] {
 
-    return this.categories().filter(
-      category =>
-        category.parentUuid === null &&
-        category.type === type
-    );
+    return this.categories()
+      .filter(
+        category =>
+          category.parentUuid === null &&
+          category.type === type
+      )
+      .sort((a, b) => 
+        a.name.localeCompare(b.name, undefined, {
+          sensitivity: 'base',
+          numeric: true
+        })
+      );
   }
 
   getChildren(
     parentUuid: string
   ): Category[] {
 
-    return this.categories().filter(
+    return this.categories()
+    .filter(
       category =>
         category.parentUuid ===
         parentUuid
+    )
+    .sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, {
+        sensitivity: 'base',
+        numeric: true
+      })
     );
   }
 }

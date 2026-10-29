@@ -24,16 +24,17 @@
   margin: 0 0 12px;
   padding-bottom: 8px;
 
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--color-primary);
 
   font-size: 16px;
   font-weight: 700;
 }
 
 .accounts-list {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(23, 107, 85, 0.08);
+  background: var(--color-surface);
   overflow: hidden;
 }
 
@@ -43,7 +44,11 @@
   align-items: center;
 
   padding: 18px 20px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: none;
+}
+
+.account + .account {
+  border-top: 1px solid var(--color-divider);
 }
 
 .account:last-child {
@@ -70,6 +75,18 @@
 .account-actions > strong {
   margin-right: 8px;
   font-size: 16px;
+}
+
+.account-balance.positive {
+  color: #15803d;
+}
+
+.account-balance.negative {
+  color: #b91c1c;
+}
+
+.account-balance.zero {
+  color: var(--color-text);
 }
 
 .account-actions button {

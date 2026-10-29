@@ -9,10 +9,10 @@
   padding: 20px;
   margin-bottom: 28px;
 
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .transaction-form label {
@@ -30,17 +30,18 @@
 
   padding: 10px 12px;
 
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 
   font-size: 14px;
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .transaction-form input:focus,
 .transaction-form select:focus {
   outline: none;
-  border-color: #6b7280;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
 }
 
 .description {
@@ -59,6 +60,16 @@
   font-weight: 600;
 
   cursor: pointer;
+}
+
+.transaction-form button {
+  background: var(--color-primary);
+  color: #ffffff;
+  transition: background-color 0.15s ease;
+}
+
+.transaction-form button:hover:not(:disabled) {
+  background: #125541;
 }
 
 .transaction-form button:disabled {

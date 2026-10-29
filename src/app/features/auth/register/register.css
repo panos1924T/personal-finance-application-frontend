@@ -81,7 +81,7 @@ button {
   padding: 11px 16px;
   border: none;
   border-radius: 8px;
-  background: #111827;
+  background: var(--color-primary);
   color: #ffffff;
   font-size: 14px;
   font-weight: 600;
@@ -89,7 +89,7 @@ button {
 }
 
 button:hover:not(:disabled) {
-  background: #374151;
+  background: #125541;
 }
 
 button:disabled {

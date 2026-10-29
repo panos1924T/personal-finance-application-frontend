@@ -19,10 +19,10 @@
 
   padding: 20px;
 
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .filters-header {
@@ -103,7 +103,7 @@
   border: none;
   border-radius: 7px;
 
-  background: #111827;
+  background: var(--color-primary);
   color: #ffffff;
 
   font-weight: 600;
@@ -111,7 +111,7 @@
 }
 
 .apply-button:hover {
-  background: #374151;
+  background: #125541;
 }
 
 .clear-button {
@@ -133,10 +133,10 @@
 /* Transaction list */
 
 .transactions-list {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   overflow: hidden;
 }
 
@@ -150,7 +150,7 @@
   padding: 16px 20px;
 
   border-bottom:
-    1px solid #e5e7eb;
+    1px solid var(--color-border);
 }
 
 .transaction:last-child {
