@@ -120,22 +120,36 @@ export class Transactions implements OnInit {
 
       accounts:
         this.accountService
-          .getAccounts(1000),
+          .getAllAccounts(),
 
       categories:
         this.categoryService
-          .getCategories()
+          .getAllCategories()
 
     }).subscribe({
 
       next: response => {
 
         this.accounts.set(
-          response.accounts.content
+          response.accounts
         );
 
         this.categories.set(
-          response.categories.content
+          [...response.categories].sort((a, b) => {
+            const labelA = a.parentName
+              ? `${a.parentName} / ${a.name}`
+              : a.name;
+
+            const labelB = b.parentName
+              ? `${b.parentName} / ${b.name}`
+              : b.name;
+
+            return labelA.localeCompare(
+              labelB,
+              'el',
+              { sensitivity: 'base' }
+            );
+          })
         );
       },
 

@@ -50,18 +50,12 @@ export class Categories implements OnInit {
   ngOnInit(): void {
 
     this.categoryService
-      .getCategories()
+      .getAllCategories()
       .subscribe({
-
-        next: response => {
-
-          this.categories.set(
-            response.content
-          );
+        next: categories => {
+          this.categories.set(categories);
         },
-
         error: error => {
-
           this.notification.apiError(
             error,
             'Failed to load categories.'

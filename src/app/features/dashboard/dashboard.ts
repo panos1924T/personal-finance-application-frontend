@@ -48,7 +48,7 @@ export class Dashboard implements OnInit {
     forkJoin({
 
       accounts:
-        this.accountService.getAccounts(1000),
+        this.accountService.getAllAccounts(),
 
       income:
         this.transactionService.getTransactions({
@@ -76,7 +76,7 @@ export class Dashboard implements OnInit {
       next: response => {
 
         const balance =
-          response.accounts.content.reduce(
+          response.accounts.reduce(
             (sum, account) =>
               sum + account.balance,
             0

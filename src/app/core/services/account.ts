@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
 
 import {
   Account,
@@ -10,6 +10,8 @@ import {
 
 interface AccountPage {
   content: Account[];
+  totalPages: number;
+  size: number;
 }
 
 @Injectable({
@@ -25,16 +27,39 @@ export class AccountService {
   ) {}
 
   getAccounts(
-    size: number = 20
-  ): Observable<AccountPage> {
+    page = 0,
+      size = 100
+    ): Observable<AccountPage> {
+      const params = new HttpParams()
+        .set('page', page)
+        .set('size', size);
 
-    return this.http.get<AccountPage>(
-      this.apiUrl,
-      {
-        params: {
-          size
+      return this.http.get<AccountPage>(
+        this.apiUrl,
+        { params }
+      );
+    }
+
+  getAllAccounts(): Observable<Account[]> {
+    return this.getAccounts().pipe(
+      switchMap(firstPage => {
+        const remainingPages = Array.from(
+          { length: Math.max(0, firstPage.totalPages - 1) },
+          (_, index) =>
+            this.getAccounts(index + 1, firstPage.size)
+        );
+
+        if (remainingPages.length === 0) {
+          return of(firstPage.content);
         }
-      }
+
+        return forkJoin(remainingPages).pipe(
+          map(pages => [
+            ...firstPage.content,
+            ...pages.flatMap(page => page.content)
+          ])
+        );
+      })
     );
   }
 

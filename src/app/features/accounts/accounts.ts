@@ -52,13 +52,13 @@ export class Accounts implements OnInit {
   ngOnInit(): void {
 
     this.accountService
-      .getAccounts()
+      .getAllAccounts()
       .subscribe({
 
         next: response => {
 
           this.accounts.set(
-            response.content
+            response
           );
         },
 
