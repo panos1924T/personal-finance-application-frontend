@@ -124,7 +124,7 @@ export class Transactions implements OnInit {
 
       categories:
         this.categoryService
-          .getCategories()
+          .getAllCategories()
 
     }).subscribe({
 
@@ -135,7 +135,21 @@ export class Transactions implements OnInit {
         );
 
         this.categories.set(
-          response.categories.content
+          [...response.categories].sort((a, b) => {
+            const labelA = a.parentName
+              ? `${a.parentName} / ${a.name}`
+              : a.name;
+
+            const labelB = b.parentName
+              ? `${b.parentName} / ${b.name}`
+              : b.name;
+
+            return labelA.localeCompare(
+              labelB,
+              'el',
+              { sensitivity: 'base' }
+            );
+          })
         );
       },
 
