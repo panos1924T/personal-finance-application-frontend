@@ -131,7 +131,12 @@ export class Transactions implements OnInit {
       next: response => {
 
         this.accounts.set(
-          response.accounts
+          [...response.accounts].sort((a, b) =>
+            a.name.localeCompare(b.name, 'el', {
+              sensitivity: 'base',
+              numeric: true
+            })
+          )
         );
 
         this.categories.set(
