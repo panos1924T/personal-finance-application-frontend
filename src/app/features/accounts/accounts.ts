@@ -200,9 +200,13 @@ export class Accounts implements OnInit {
     type: Account['accountType']
   ): Account[] {
 
-    return this.accounts().filter(
-      account =>
-        account.accountType === type
+    return this.accounts()
+    .filter(account => account.accountType === type)
+    .sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, {
+      sensitivity: 'base',
+      numeric: true
+    })
     );
   }
 }
