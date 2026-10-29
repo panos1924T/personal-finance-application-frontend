@@ -120,7 +120,7 @@ export class Transactions implements OnInit {
 
       accounts:
         this.accountService
-          .getAccounts(1000),
+          .getAllAccounts(),
 
       categories:
         this.categoryService
@@ -131,7 +131,7 @@ export class Transactions implements OnInit {
       next: response => {
 
         this.accounts.set(
-          response.accounts.content
+          response.accounts
         );
 
         this.categories.set(
