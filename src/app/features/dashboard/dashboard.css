@@ -30,10 +30,13 @@
 
   padding: 20px;
 
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
+  border-top: 3px solid var(--color-primary);
+  box-shadow: 0 4px 14px rgba(23, 107, 85, 0.08);
 
-  background: #ffffff;
+  background: var(--color-surface);
+
 }
 
 .summary span {
@@ -54,10 +57,10 @@
 }
 
 .recent-transactions {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   overflow: hidden;
 }
 

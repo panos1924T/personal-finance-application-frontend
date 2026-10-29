@@ -70,7 +70,14 @@
 
                   <div class="account-actions">
 
-                    <strong>€{{ account.balance }}</strong>
+                    <strong
+                      class="account-balance"
+                      [class.positive]="account.balance > 0"
+                      [class.negative]="account.balance < 0"
+                      [class.zero]="account.balance === 0"
+                    >
+                      €{{ account.balance }}
+                    </strong>
 
                     <button
                       type="button"
