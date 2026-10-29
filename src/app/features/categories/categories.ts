@@ -208,10 +208,17 @@ export class Categories implements OnInit {
     parentUuid: string
   ): Category[] {
 
-    return this.categories().filter(
+    return this.categories()
+    .filter(
       category =>
         category.parentUuid ===
         parentUuid
+    )
+    .sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, {
+        sensitivity: 'base',
+        numeric: true
+      })
     );
   }
 }

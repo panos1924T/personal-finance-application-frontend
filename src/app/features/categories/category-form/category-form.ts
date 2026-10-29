@@ -124,10 +124,17 @@ export class CategoryForm {
         .type
         .value;
 
-    return this.categories.filter(
-      category =>
-        category.group &&
-        category.type === selectedType
-    );
+    return this.categories
+      .filter(
+        category =>
+          category.group &&
+          category.type === selectedType
+      )
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, {
+          sensitivity: 'base',
+          numeric: true
+        })
+      );
   }
 }
